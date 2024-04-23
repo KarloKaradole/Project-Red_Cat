@@ -2,118 +2,119 @@ import math
 import os
 
 def read_coordinates(filename):
-    """Read coordinates from a file and return them as a list of tuples."""
     with open(filename, 'r') as file:
         lines = file.readlines()
     coordinates = [tuple(map(float, line.strip().split())) for line in lines]
     return coordinates
 
-def are_perpendicular(p1, p2, p3):
-    """Check if the line segments between p1-p2 and p2-p3 are perpendicular."""
-    vec_p1p2 = (p2[0] - p1[0], p2[1] - p1[1])
-    vec_p2p3 = (p3[0] - p2[0], p3[1] - p2[1])
-    dot_product = vec_p1p2[0] * vec_p2p3[0] + vec_p1p2[1] * vec_p2p3[1]
-    return math.isclose(dot_product, 0, abs_tol=1e-9)
-
-def check_rectangle_formation(A, B, C):
-    """Check if three points can form a rectangle, and return the diagonal points if true."""
+def are_perpendicular(A, B, C):
+    """Check for vector perpendicularity."""
+    vec_AB = (B[0] - A[0], B[1] - A[1])
+    vec_AC = (C[0] - A[0], C[1] - A[1])
     
-    """dAB = math.dist(A, B)
-    dBC = math.dist(B, C)
-    dCA = math.dist(C, A)"""
-    if are_perpendicular(A, B, C) and """dAB == dBC""":
-        return (A, C)
-    elif are_perpendicular(B, C, A) and """dBC == dCA""":
-        return (B, A)
-    elif are_perpendicular(C, A, B) and """dCA == dAB""":
+    vec_BA = (A[0] - B[0], A[1] - B[1])
+    vec_BC = (C[0] - B[0], C[1] - B[1])
+    
+    vec_CA = (A[0] - C[0], A[1] - C[1])
+    vec_CB = (B[0] - C[0], B[1] - C[1])
+    
+    dot_product_ABAC = vec_AB[0] * vec_AC[0] + vec_AB[1] * vec_AC[1]
+    dot_product_BABC = vec_BA[0] * vec_BC[0] + vec_BA[1] * vec_BC[1]
+    dot_product_CACB = vec_CA[0] * vec_CB[0] + vec_CA[1] * vec_CB[1]
+    
+    if math.isclose(dot_product_ABAC, 0, abs_tol=1e-1):
         return (B, C)
-    return None
+    # Check BA and BC
+    if math.isclose(dot_product_BABC, 0, abs_tol=1e-1):
+        return (A, C)
+    # Check CA and CB
+    if math.isclose(dot_product_CACB, 0, abs_tol=1e-1):
+        return (A, B)
+    
+    return False
 
-def calculate_diagonal(opposite_point1, opposite_point2):
-    """Calculate the diagonal of the rectangle from two opposite points."""
-    return math.dist(opposite_point1, opposite_point2)
+def calculate_diagonal(diagonal_point1, diagonal_point2):
+    """Calculate the diagonal of the rectangle using two opposite points in initial triangle."""
+    return math.dist(diagonal_point1, diagonal_point2)
 
-def point_inside_rectangle(A, B, C, X):
-    """Check if point X is inside the triangle ABC, used to approximate rectangle inclusion."""
-    def sign(p1, p2, p3):
-        return (p1[0] - p3[0]) * (p2[1] - p3[1]) - (p2[0] - p3[0]) * (p1[1] - p3[1])
-    d1 = sign(X, A, B)
-    d2 = sign(X, B, C)
-    d3 = sign(X, C, A)
-    has_neg = (d1 < 0) or (d2 < 0) or (d3 < 0)
-    has_pos = (d1 > 0) or (d2 > 0) or (d3 > 0)
-    return not (has_neg and has_pos)
+def position_of_fourth_point(A, B, C):
+    """Finding the fourth point of a rectangle given three points A, B, and C. 
+    Calculate coordinates using vector addition."""
+    
+    opposite_points = are_perpendicular(A, B, C)
+    
+    if opposite_points == (B, C):
+        D = (B[0] + C[0] - A[0], B[1] + C[1] - A[1])
+    elif opposite_points == (A, C):
+        D = (A[0] + C[0] - B[0], A[1] + C[1] - B[1])
+    elif opposite_points == (A, B):
+        D = (A[0] + B[0] - C[0], A[1] + B[1] - C[1])
+  
+    return D
 
-def calculate_point_d(A, B, C, right_angle_point):
-    """Calculate the fourth point D in a rectangle, given points A, B, and C,
-       and the point label ('A', 'B', or 'C') that has the right angle."""
+def point_X_inside_rectangle(A, B, C, X, D):
+    """Determines if the point X is inside rectangle."""
+    min_x = min(A[0], B[0], C[0], D[0])
+    max_x = max(A[0], B[0], C[0], D[0])
+    min_y = min(A[1], B[1], C[1], D[1])
+    max_y = max(A[1], B[1], C[1], D[1])
+    return min_x <= X[0] <= max_x and min_y <= X[1] <= max_y
 
-    # Determine vectors based on the right angle location
-    if right_angle_point == 'A':
-        # Vectors BA and CA
-        vec1 = (A[0] - B[0], A[1] - B[1])  # Vector from B to A
-        vec2 = (A[0] - C[0], A[1] - C[1])  # Vector from C to A
-        origin = A
-        other1 = B
-        other2 = C
-    elif right_angle_point == 'B':
-        # Vectors AB and CB
-        vec1 = (B[0] - A[0], B[1] - A[1])  # Vector from A to B
-        vec2 = (B[0] - C[0], B[1] - C[1])  # Vector from C to B
-        origin = B
-        other1 = A
-        other2 = C
-    elif right_angle_point == 'C':
-        # Vectors AC and BC
-        vec1 = (C[0] - A[0], C[1] - A[1])  # Vector from A to C
-        vec2 = (C[0] - B[0], C[1] - B[1])  # Vector from B to C
-        origin = C
-        other1 = A
-        other2 = B
-
-    # Calculate perpendicular vectors
-    perp1 = (-vec1[1], vec1[0])  # Perpendicular to vec1
-    perp2 = (-vec2[1], vec2[0])  # Perpendicular to vec2
-
-    a, b, c, d = perp1[0], -perp2[0], perp1[1], -perp2[1]
-    e, f = other2[0] - other1[0], other2[1] - other1[1]
-    det = a * d - b * c
-    if det == 0:
-        raise ValueError("Lines do not intersect, cannot form a rectangle")
-
-    # Cramer's rule
-    t = (e * d - b * f) / det
-
-    # Calculate D using parameter t in one of the line equations
-    D_x = other1[0] + t * perp1[0]
-    D_y = other1[1] + t * perp1[1]
-
-    return (D_x, D_y)
-
+def type_of_rectangle(A, B, C):
+    """Using simple calculation with distances it returns us type of rectangle."""
+    
+    opposite_points = are_perpendicular(A,B,C)
+    
+    if opposite_points == (B, C):
+        dAB = math.dist(A, B)
+        dAC = math.dist(A, C)
+        if dAB == dAC:
+            return "Square"
+        else:
+            return "Rectangle"
+    elif opposite_points == (A, C):
+        dBA = math.dist(B, A)
+        dBC = math.dist(B, C)
+        if dBA == dBC:
+            return "Square"
+        else:
+            return "Rectangle"
+    elif opposite_points == (A, B):
+        dCA = math.dist(C, A)
+        dCB = math.dist(C, B)
+        if dCA == dCB:
+            return "Square"
+        else:
+            return "Rectangle"
+    
 def main():
-    filename = input("Enter the filename containing the coordinates: ")
+    filename = input("Enter the filename containing the points: ")
     try:
-        coordinates = read_coordinates(filename)
-        if len(coordinates) < 4:
+        points = read_coordinates(filename)
+        if len(points) < 4:
             print("Not enough points provided.")
             return
 
-        A, B, C, X = coordinates[:4]
-        diagonal_points = check_rectangle_formation(A, B, C)
-        if diagonal_points:
-            print("Given points can be part of the rectangle.")
-            #point_d = calculate_point_d(A, B, C, right_angle_point)
-            diagonal_length = calculate_diagonal(*diagonal_points)
-            inside = point_inside_rectangle(A, B, C, X)
-            print(f"The diagonal of the rectangle is: {diagonal_length}")
-            print(f"Point X inside the triangle approximation of rectangle: {inside}")
+        A, B, C, X = points[:4]
+        perpendicular = are_perpendicular(A, B, C)
+        if perpendicular:
+            print (perpendicular)
+            fourth_point = position_of_fourth_point(A, B, C)
+            diagonal_length = calculate_diagonal(*perpendicular)
+            rectangle_type = type_of_rectangle(A, B, C)
+            inside = point_X_inside_rectangle(A, B, C, X, fourth_point)
+            print("Given points CAN be part of the rectangle.")
+            print(f"Type of rectangle: {rectangle_type}")
+            print(f"The diagonal of the rectangle has length: {diagonal_length}")
+            print(f"Position of fourth point is: {fourth_point}")
+            print(f"Point X inside the rectangle: {inside}")
         else:
-            print("Given points cannot be part of the rectangle.")
+            print("Given points CANNOT be part of the rectangle.")
     except FileNotFoundError:
         print("File not found. Please ensure the filename is correct and the file exists in the specified path.")
     except Exception as e:
         print(f"An error occurred: {e}")
-
+              
 if __name__ == "__main__":
     os.system("cls")
     main()
