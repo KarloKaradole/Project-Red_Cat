@@ -7,7 +7,7 @@ def read_coordinates(filename):
     coordinates = [tuple(map(float, line.strip().split())) for line in lines]
     return coordinates
 
-def are_perpendicular(A, B, C):
+def orthogonality2D(A, B, C):
     """Check for vector perpendicularity."""
     vec_AB = (B[0] - A[0], B[1] - A[1])
     vec_AC = (C[0] - A[0], C[1] - A[1])
@@ -22,13 +22,13 @@ def are_perpendicular(A, B, C):
     dot_product_BABC = vec_BA[0] * vec_BC[0] + vec_BA[1] * vec_BC[1]
     dot_product_CACB = vec_CA[0] * vec_CB[0] + vec_CA[1] * vec_CB[1]
     
-    if math.isclose(dot_product_ABAC, 0, abs_tol=1e-1):
+    if math.isclose(dot_product_ABAC, 0, abs_tol=1e-3):
         return (B, C)
     # Check BA and BC
-    if math.isclose(dot_product_BABC, 0, abs_tol=1e-1):
+    if math.isclose(dot_product_BABC, 0, abs_tol=1e-3):
         return (A, C)
     # Check CA and CB
-    if math.isclose(dot_product_CACB, 0, abs_tol=1e-1):
+    if math.isclose(dot_product_CACB, 0, abs_tol=1e-3):
         return (A, B)
     
     return False
@@ -41,7 +41,7 @@ def position_of_fourth_point(A, B, C):
     """Finding the fourth point of a rectangle given three points A, B, and C. 
     Calculate coordinates using vector addition."""
     
-    opposite_points = are_perpendicular(A, B, C)
+    opposite_points = orthogonality2D(A, B, C)
     
     if opposite_points == (B, C):
         D = (B[0] + C[0] - A[0], B[1] + C[1] - A[1])
@@ -61,9 +61,9 @@ def point_X_inside_rectangle(A, B, C, X, D):
     return min_x <= X[0] <= max_x and min_y <= X[1] <= max_y
 
 def type_of_rectangle(A, B, C):
-    """Using simple calculation with distances it returns us type of rectangle."""
+    """Using simple calculation with distances which returns us type of rectangle."""
     
-    opposite_points = are_perpendicular(A,B,C)
+    opposite_points = orthogonality2D(A,B,C)
     
     if opposite_points == (B, C):
         dAB = math.dist(A, B)
@@ -96,7 +96,7 @@ def main():
             return
 
         A, B, C, X = points[:4]
-        perpendicular = are_perpendicular(A, B, C)
+        perpendicular = orthogonality2D(A, B, C)
         if perpendicular:
             print (perpendicular)
             fourth_point = position_of_fourth_point(A, B, C)

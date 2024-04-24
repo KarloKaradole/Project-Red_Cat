@@ -1,0 +1,53 @@
+def orthogonality3D(A, B, C, D):
+    """Check for vector perpendicularity."""
+    vec_AB = (B[0] - A[0], B[1] - A[1], B[2] - A[2])
+    vec_AC = (C[0] - A[0], C[1] - A[1], C[2] - A[2])
+    vec_AD = (D[0] - A[0], D[1] - A[1], D[2] - A[2])
+    
+    
+    vec_BA = (A[0] - B[0], A[1] - B[1], A[2] - B[2])
+    vec_BC = (C[0] - B[0], C[1] - B[1], C[2] - B[2])
+    vec_BD = (D[0] - B[0], D[1] - B[1], D[2] - B[2])
+    
+    vec_CA = (A[0] - C[0], A[1] - C[1], A[2] - C[2])
+    vec_CB = (B[0] - C[0], B[1] - C[1], B[2] - C[2])
+    vec_CD = (D[0] - C[0], D[1] - C[1], D[2] - C[2])
+    
+    dot_product_ABAC = vec_AB[0] * vec_AC[0] + vec_AB[1] * vec_AC[1] + vec_AB[2] * vec_AC[2]
+    dot_product_ABAD = vec_AB[0] * vec_AD[0] + vec_AB[1] * vec_AD[1] + vec_AB[2] * vec_AD[2]
+    dot_product_ACAD = vec_AC[0] * vec_AD[0] + vec_AC[1] * vec_AD[1] + vec_AC[2] * vec_AD[2]
+    
+    dot_product_BABC = vec_BA[0] * vec_BC[0] + vec_BA[1] * vec_BC[1] + vec_BA[2] * vec_BC[2]
+    dot_product_BABD = vec_BA[0] * vec_BD[0] + vec_BA[1] * vec_BD[1] + vec_BA[2] * vec_BD[2]
+    dot_product_BCBD = vec_BC[0] * vec_BD[0] + vec_BC[1] * vec_BD[1] + vec_BC[2] * vec_BD[2]
+    
+    dot_product_CACB = vec_CA[0] * vec_CB[0] + vec_CA[1] * vec_CB[1] + vec_CA[2] * vec_CB[2]
+    dot_product_CACD = vec_CA[0] * vec_CD[0] + vec_CA[1] * vec_CD[1] + vec_CA[2] * vec_CD[2]
+    dot_product_CBCD = vec_CB[0] * vec_CD[0] + vec_CB[1] * vec_CD[1] + vec_CB[2] * vec_CD[2]
+    
+    
+    #Check for AB, AC and AD
+    if math.isclose(dot_product_ABAC and dot_product_ABAD, 0, abs_tol=1e-3):
+        pass
+    if math.isclose(dot_product_ABAC and dot_product_ACAD, 0, abs_tol=1e-3):
+        pass
+    if math.isclose(dot_product_ABAD and dot_product_ACAD, 0, abs_tol=1e-3):
+        pass
+    
+    #Check for BA, BC and BD
+    if math.isclose(dot_product_BABC and dot_product_BABD, 0, abs_tol=1e-3):
+        pass
+    if math.isclose(dot_product_BABC and dot_product_BCBD, 0, abs_tol=1e-3):
+        pass
+    if math.isclose(dot_product_BABD and dot_product_BCBD, 0, abs_tol=1e-3):
+        pass
+    
+    #Check for CA, CB and CD
+    if math.isclose(dot_product_CACB and dot_product_CACD, 0, abs_tol=1e-3):
+        pass
+    if math.isclose(dot_product_CACB and dot_product_CBCD, 0, abs_tol=1e-3):
+        pass
+    if math.isclose(dot_product_CACD and dot_product_CBCD, 0, abs_tol=1e-3):
+        pass
+
+    return False
