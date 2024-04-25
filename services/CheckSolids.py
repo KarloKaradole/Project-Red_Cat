@@ -1,14 +1,7 @@
-import math, os
+import math
 
-class vector_3d:
-
-    def read_coordinates(filename):
-        with open(filename, 'r') as file:
-            lines = file.readlines()
-        coordinates = [tuple(map(float, line.strip().split())) for line in lines]
-        return coordinates
-
-    def orthogonality3D(A, B, C, D):
+class CheckSolid:
+    def orthogonality_3D(A, B, C, D):
         """Check for vector perpendicularity.
         Return: Boolean and Integer"""
 
@@ -126,7 +119,9 @@ class vector_3d:
     def point_X_inside_hexahedron(A, B, C, D, X):
         """Determines if the point X is inside cuboid or cube.
         Condition: Cuboid or cube has three edges on axis.
+        Status: Unfinished.
         Return: Boolean."""
+        
         min_x = min(A[0], B[0], C[0], D[0])
         max_x = max(A[0], B[0], C[0], D[0])
         min_y = min(A[1], B[1], C[1], D[1])
@@ -135,31 +130,24 @@ class vector_3d:
         max_z = max(A[2], B[2], C[2], D[2])
         return min_x <= X[0] <= max_x and min_y <= X[1] <= max_y and min_z <= X[2] <= max_z
 
-    def main():
-        filename = input("Enter the filename containing the points: ")
+    def main_3d(points):
         try:
-            points = vector_3d.read_coordinates(filename)
             if len(points) < 4:
                 print("Not enough points provided.")
                 return
 
             A, B, C, D = points[:4]
             X = points[4]
-            perpendicular = vector_3d.orthogonality3D(A, B, C, D)
+            perpendicular = CheckSolid.orthogonality_3D(A, B, C, D)
             if perpendicular:
                 print("Given points CAN be part of the cuboid.")
-                inside = vector_3d.point_X_inside_hexahedron(A, B, C, D, X)
+                inside = CheckSolid.point_X_inside_hexahedron(A, B, C, D, X)
                 print(f"Point X inside the cuboid: {inside}")
-                diagonal_length3D = vector_3d.calculate_diagonal_3d(A, B, C, D, num = perpendicular[1])
-                print(f"The diagonal of the rectangle has length: {diagonal_length3D}")
+                diagonal_length3D = CheckSolid.calculate_diagonal_3d(A, B, C, D, num = perpendicular[1])
+                print(f"The space diagonal of the cuboid has length: {diagonal_length3D}")
             else:
                 print("Given points CANNOT be part of the cuboid.")
         except FileNotFoundError:
             print("File not found. Please ensure the filename is correct and the file exists in the specified path.")
         except Exception as e:
             print(f"An error occurred: {e}")
-                
-if __name__ == "__main__":
-    os.system("cls")
-    vector_3d.main()
-    
