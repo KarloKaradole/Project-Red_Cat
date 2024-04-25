@@ -1,5 +1,4 @@
-import math
-import os
+import math, os
 
 class vector_2d:
     def read_coordinates(filename):

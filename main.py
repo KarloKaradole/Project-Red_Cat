@@ -1,5 +1,4 @@
-import math
-import os
+import math, os
 
 def read_coordinates(filename):
         with open(filename, 'r') as file:

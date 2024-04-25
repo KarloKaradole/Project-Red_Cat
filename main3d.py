@@ -1,18 +1,5 @@
 import math, os
 
-def read_coordinates(filename):
-        with open(filename, 'r') as file:
-            lines = file.readlines()
-        coordinates = [tuple(map(float, line.strip().split())) for line in lines]
-        
-        if coordinates:
-            dimensionality = len(coordinates[0])
-        else:
-            dimensionality = 0
-        
-        return coordinates, dimensionality
-
-
 class vector_3d:
 
     def read_coordinates(filename):
@@ -151,7 +138,7 @@ class vector_3d:
     def main():
         filename = input("Enter the filename containing the points: ")
         try:
-            points = read_coordinates(filename)[0]
+            points = vector_3d.read_coordinates(filename)
             if len(points) < 4:
                 print("Not enough points provided.")
                 return
