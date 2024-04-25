@@ -10,7 +10,9 @@ Create a program that will take as input the 2D coordinates of points A, B, C, a
 # Addition
 
 • depending on the points A, B, and C, the program needs to recognize what type of rectangle it is (rectangle or cuboid) and dynamically determine which classes or functions will be called for execution
+
 • expand the program to support the input of points A, B, C, D, and X, each with three dimensions. Let the program check if points A, B, C, and D can be vertices of a cuboid. Let it check if point X is inside the cuboid ABCD. Let it calculate the spatial diagonal.
+
 • make the program work with an arbitrary number of dimensions from the previous task
 
 # Input and Output Examples
