@@ -37,9 +37,9 @@ This project involves creating a program that processes 2D and 3D coordinates to
 ### Example 1 (2D):
 - **Input**:  
 
-A: 0, 0
-B: 5, 0
-C: 0, 5
+A: 0, 0;
+B: 5, 0;
+C: 0, 5;
 X: 2, 2
 
 - **Output**:  
@@ -49,10 +49,10 @@ True
 ### Example 2 (3D):
 - **Input**:  
 
-A: 0, 0, 0
-B: 5, 0, 0
-C: 0, 3, 0
-D: 0, 0, 1
+A: 0, 0, 0;
+B: 5, 0, 0;
+C: 0, 3, 0;
+D: 0, 0, 1;
 X: 1, 1, 2
 
 
